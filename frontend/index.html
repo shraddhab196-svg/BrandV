@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brand Voice — AI Tweet Studio</title>
+  <meta name="description" content="Tell us about your brand and what you're promoting. We'll help you create content that feels true to your brand." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235a1f33'/%3E%3Cpath d='M9 19v-6M13 22V10M17 20v-8M21 17v-2' stroke='%23f2c6cf' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <header class="topbar reveal" style="--d: 0">
+    <a class="logo" href="/" aria-label="Brand Voice home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M9 19v-6M13 22V10M17 20v-8M21 17v-2" /></svg>
+      </span>
+      <span class="logo-text">Brand Voice</span>
+    </a>
+    <div class="status" id="status" data-state="checking">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-text" id="status-text">Checking engine…</span>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero reveal" style="--d: 1">
+      <p class="eyebrow">AI tweet studio</p>
+      <h1>Tweets that sound like <em>your brand.</em></h1>
+      <p class="lede">Tell us about your brand and what you're promoting. We'll help you create content that feels true to your brand.</p>
+    </section>
+
+    <div class="workspace">
+      <!-- Brief -->
+      <section class="panel brief reveal" style="--d: 2" aria-labelledby="brief-title">
+        <div class="panel-head">
+          <p class="eyebrow">Step 1</p>
+          <h2 id="brief-title">The brand brief</h2>
+        </div>
+
+        <form id="brief-form" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="brand_name">Brand name <span class="tag tag-optional">Optional</span></label>
+              <input id="brand_name" name="brand_name" type="text" maxlength="100" placeholder="e.g. Moonbrew" autocomplete="organization" />
+            </div>
+            <div class="field">
+              <label for="industry">Industry <span class="tag tag-optional">Optional</span></label>
+              <input id="industry" name="industry" type="text" maxlength="100" placeholder="e.g. Specialty coffee" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="campaign_objective">Campaign objective <span class="tag">Required</span></label>
+            <textarea id="campaign_objective" name="campaign_objective" rows="2" minlength="3" maxlength="500" required
+              placeholder="e.g. Launch our new decaf cold brew for late-night workers"></textarea>
+            <div class="field-foot">
+              <span class="field-error" id="campaign_objective-error" role="alert"></span>
+              <span class="counter" data-for="campaign_objective">0 / 500</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="description">Brand &amp; product description <span class="tag">Required</span></label>
+            <textarea id="description" name="description" rows="6" minlength="10" maxlength="3000" required
+              placeholder="What you sell, who it's for, what makes it different, and how you like to sound."></textarea>
+            <div class="field-foot">
+              <span class="field-error" id="description-error" role="alert"></span>
+              <span class="counter" data-for="description">0 / 3000</span>
+            </div>
+            <p class="hint">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2a6 6 0 0 0-3.5 10.9V15a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-2.1A6 6 0 0 0 10 2Zm-2 16h4" /></svg>
+              <span>Tip: adding your website or <code>x.com/handle</code> helps us match your voice.</span>
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="example_tweets">Example tweets <span class="tag tag-optional">Optional</span></label>
+            <textarea id="example_tweets" name="example_tweets" rows="4"
+              placeholder="Paste 3–5 tweets…" aria-describedby="example_tweets-hint"></textarea>
+            <div class="field-foot">
+              <span class="field-error" id="example_tweets-error" role="alert"></span>
+              <span class="counter" data-for="example_tweets">0 tweets</span>
+            </div>
+            <p class="hint" id="example_tweets-hint">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2a6 6 0 0 0-3.5 10.9V15a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-2.1A6 6 0 0 0 10 2Zm-2 16h4" /></svg>
+              <span>One tweet per line. Put multi-line tweets on a single line.</span>
+            </p>
+          </div>
+
+          <button class="btn-primary" id="generate-btn" type="submit">
+            <span class="btn-label">Generate tweets</span>
+            <svg class="btn-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
+          <p class="shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to generate</p>
+        </form>
+      </section>
+
+      <!-- Output -->
+      <section class="output reveal" style="--d: 3" aria-labelledby="output-title" aria-live="polite" aria-busy="false" id="output">
+        <h2 class="visually-hidden" id="output-title">Results</h2>
+
+        <!-- Empty -->
+        <div class="state state-empty" data-state="empty">
+          <div class="ghost-stack" aria-hidden="true">
+            <div class="ghost ghost-1"><span></span><span></span><span class="short"></span></div>
+            <div class="ghost ghost-2"><span></span><span class="short"></span></div>
+            <div class="ghost ghost-3"><span></span><span></span><span class="short"></span></div>
+          </div>
+          <p class="eyebrow">Step 2</p>
+          <h3>Your brand voice will appear here</h3>
+          <ol class="steps">
+            <li><span>1</span><p><strong>Your brief</strong>Tell us about your brand.</p></li>
+            <li><span>2</span><p><strong>Our process</strong>We shape the content around your brand.</p></li>
+            <li><span>3</span><p><strong>Your content</strong>Review your generated content.</p></li>
+          </ol>
+        </div>
+
+        <!-- Loading -->
+        <div class="state state-loading" data-state="loading" hidden>
+          <div class="progress-card">
+            <div class="progress-head">
+              <div class="x-loader" id="x-loader" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <defs>
+                    <linearGradient id="x-grad-main" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#f2c6cf" />
+                      <stop offset="0.55" stop-color="#e0708b" />
+                      <stop offset="1" stop-color="#c9a46a" />
+                    </linearGradient>
+                    <linearGradient id="x-grad-thin" x1="1" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#c9a46a" />
+                      <stop offset="1" stop-color="#fff3ee" />
+                    </linearGradient>
+                  </defs>
+                  <!-- faint resting X the strokes draw over -->
+                  <path class="x-track" d="M13 11 L35 37 M35 11 L13 37" />
+                  <!-- echo lines that slide in and settle into place -->
+                  <path class="x-echo x-echo-a" d="M13 11 L35 37" pathLength="1" />
+                  <path class="x-echo x-echo-b" d="M35 11 L13 37" pathLength="1" />
+                  <!-- the X itself: one bold stroke, one fine stroke -->
+                  <path class="x-stroke x-main" d="M13 11 L35 37" pathLength="1" />
+                  <path class="x-stroke x-thin" d="M35 11 L13 37" pathLength="1" />
+                  <!-- travelling highlight -->
+                  <path class="x-comet" d="M13 11 L35 37" pathLength="1" />
+                </svg>
+              </div>
+              <div>
+                <p class="eyebrow">Working on it</p>
+                <h3 id="loading-title">Reading your brief…</h3>
+              </div>
+            </div>
+            <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+            <ol class="stages" id="stages">
+              <li data-stage="0">Reading your brief</li>
+              <li data-stage="1">Creating your brand voice</li>
+              <li data-stage="2">Getting your content ready</li>
+            </ol>
+            <p class="progress-note">This usually takes less than a minute.</p>
+          </div>
+          <div class="skeleton-grid" aria-hidden="true">
+            <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="state state-error" data-state="error" hidden>
+          <div class="error-card" role="alert">
+            <div class="error-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 8v5m0 3.5v.01M10.3 3.9 2.6 17.2A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>
+            </div>
+            <div>
+              <h3 id="error-title">Something went wrong</h3>
+              <p id="error-message">Please try again.</p>
+              <button class="btn-secondary" id="retry-btn" type="button">Try again</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fallback: no usable posts for the brand, so ask how to sound (questions come from the server) -->
+        <div class="state state-questions" data-state="questions" hidden>
+          <section class="panel-block questions-card" aria-labelledby="questions-title">
+            <p class="eyebrow">Step 2</p>
+            <h3 id="questions-title">Tell us how to sound</h3>
+            <p class="block-message" id="questions-message"></p>
+            <form id="voice-form" novalidate>
+              <div id="voice-questions"></div>
+              <p class="field-error" id="voice-form-error" role="alert"></p>
+              <button class="btn-primary" id="voice-submit" type="submit">
+                <span class="btn-label">Generate with this voice</span>
+                <svg class="btn-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" /></svg>
+              </button>
+            </form>
+          </section>
+        </div>
+
+        <!-- Success -->
+        <div class="state state-success" data-state="success" hidden>
+          <!-- 1. Your tweets: the primary result -->
+          <div class="results-bar">
+            <div>
+              <p class="eyebrow">Your tweets</p>
+              <h3 id="results-title" tabindex="-1">Ready to post</h3>
+              <p class="results-status" id="results-status"></p>
+            </div>
+            <div class="results-actions">
+              <button class="btn-ghost" id="copy-all-btn" type="button">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /></svg>
+                <span>Copy all</span>
+              </button>
+              <button class="btn-ghost" id="regenerate-btn" type="button">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3v4h-4" /></svg>
+                <span>Regenerate</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="review-note" id="review-note" hidden>
+            Tweets marked <strong>Needs review</strong> may contain an unsupported claim (check it against your product
+            brief) or a quality issue, such as a repeated idea. These checks are automatic and can miss things, so review
+            every tweet before publishing.
+          </p>
+          <ol class="tweet-grid" id="tweet-grid"></ol>
+
+          <!-- 2. How the brand sounds: concise summary -->
+          <article class="voice-card">
+            <div class="voice-head">
+              <p class="eyebrow eyebrow-light">Brand voice</p>
+              <h3 id="voice-title">How this brand sounds</h3>
+            </div>
+            <ul class="voice-list" id="voice-list"></ul>
+            <dl class="voice-meta">
+              <div><dt>Tone</dt><dd id="voice-tone"></dd></div>
+              <div><dt>Audience</dt><dd id="voice-audience"></dd></div>
+            </dl>
+          </article>
+
+          <!-- 3. Details, collapsed by default: traits with their evidence, and the sources we looked at -->
+          <details class="panel-block profile-panel" aria-labelledby="profile-title">
+            <summary class="block-head">
+              <div>
+                <p class="eyebrow">Voice details</p>
+                <h3 id="profile-title">Traits &amp; evidence</h3>
+              </div>
+              <div class="basis-legend" aria-label="Legend">
+                <span class="basis-tag" data-basis="evidence">Evidence-backed</span>
+                <span class="basis-tag" data-basis="inferred">Limited evidence or inferred</span>
+              </div>
+            </summary>
+            <div class="trait-grid" id="trait-grid"></div>
+            <div class="profile-cols">
+              <div>
+                <h4 class="mini-title">Writing patterns</h4>
+                <ul class="pattern-list" id="pattern-list"></ul>
+              </div>
+              <div>
+                <h4 class="mini-title">Content themes</h4>
+                <div class="chips" id="theme-chips"></div>
+                <h4 class="mini-title">Steer clear of</h4>
+                <div class="chips chips-avoid" id="avoid-chips"></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="panel-block research-panel" aria-labelledby="research-title">
+            <summary class="block-head">
+              <div>
+                <p class="eyebrow">Brand research</p>
+                <h3 id="research-title">What we looked at</h3>
+              </div>
+              <span class="status-chip" id="research-status" data-status="skipped">Skipped</span>
+            </summary>
+            <p class="block-message" id="research-message"></p>
+            <ol class="source-list" id="source-list"></ol>
+            <div class="excluded" id="excluded" hidden>
+              <p class="mini-title">Not used</p>
+              <ul id="excluded-list"></ul>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">Brand Voice · Drafts are AI-generated — review before posting.</footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="tweet-template">
+    <li class="tweet">
+      <div class="tweet-top">
+        <span class="tweet-index"></span>
+        <span class="style-badge"></span>
+      </div>
+      <div class="needs-review" role="note" hidden>
+        <strong>Needs review</strong>
+        <ul class="needs-review-text"></ul>
+      </div>
+      <p class="tweet-text"></p>
+      <div class="tweet-traits"></div>
+      <details class="tweet-why">
+        <summary>
+          <span class="why-label">Why this works</span>
+          <span class="basis-tag"></span>
+        </summary>
+        <p class="why-rationale"></p>
+        <p class="why-insight" hidden><span class="source-ref"></span><span class="why-insight-text"></span></p>
+      </details>
+      <div class="tweet-foot">
+        <div class="meter" aria-hidden="true"><span class="meter-fill"></span></div>
+        <span class="char-count"></span>
+        <button class="copy-btn" type="button">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /></svg>
+          <span>Copy</span>
+        </button>
+      </div>
+    </li>
+  </template>
+
+  <template id="source-template">
+    <li class="source">
+      <div class="source-head">
+        <span class="source-ref"></span>
+        <div class="source-title">
+          <p class="source-name"></p>
+          <a class="source-url" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+      </div>
+      <p class="mini-title">Retrieved excerpts</p>
+      <ul class="excerpts"></ul>
+      <p class="mini-title">Findings &amp; inferences</p>
+      <ul class="insights"></ul>
+    </li>
+  </template>
+
+  <template id="trait-template">
+    <div class="trait">
+      <div class="trait-top">
+        <h5 class="trait-name"></h5>
+        <span class="basis-tag"></span>
+      </div>
+      <p class="trait-desc"></p>
+      <div class="quotes"></div>
+    </div>
+  </template>
+
+  <script src="review.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
